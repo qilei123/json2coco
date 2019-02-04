@@ -250,11 +250,15 @@ for file_dir in matches:
 									r = (data[image_id]['regions'][region]['shape_attributes']['ry']+data[image_id]['regions'][region]['shape_attributes']['rx'])/2
 								else:
 									r = data[image_id]['regions'][region]['shape_attributes']['r']
-								if category_id == 2:
+								if 'Microaneurysms' in data[image_id]['regions'][region]['region_attributes'][region_attribute]:
 									print 'r:'+str(r)
 									if r>35:
 										r = r/2
 										print 'fixed r'
+								if '(Hemorrhages)' in data[image_id]['regions'][region]['region_attributes'][region_attribute]:
+									print 'r:'+str(r)
+									r = r*2/3
+									print 'fixed r:'+str(r)
 								circle = (data[image_id]['regions'][region]['shape_attributes']['cx'],
 											data[image_id]['regions'][region]['shape_attributes']['cy'],
 											r)
