@@ -109,7 +109,7 @@ def getRegionLabelDic(dic_file_path,split_key,index):
 	return region_labels
 
 
-def getJsonFiles(dataset_path = '../DR_COCO3'):
+def getJsonFiles(dataset_path = '../BostonAI4DB1'):
 	matches = []
 	paths = []
 	for root, dirnames, filenames in os.walk(dataset_path):
