@@ -252,6 +252,7 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 	grid_h = croped_rects[0][2] - croped_rects[0][0]
 	for i in range(len(croped_image_ids)):
 		iou = compute_iou(box,croped_rects[i])
+		print 'iou:'+str(iou)
 		if iou>0.9:
 			category_val_st[category_id_todo.index(category_id)]+=1
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
