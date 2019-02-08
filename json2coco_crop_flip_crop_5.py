@@ -79,15 +79,15 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 			croped_rects.append(rect)
 			print rect
 			croped_img = img[int(rect[0]):int(rect[2]),int(rect[1]):int(rect[3]),:]
-			image_id_s += (i*n+j)
-			s_file_name = str(image_id_s)+'_'+str(i)+'x'+str(j)+'_'+file_name
+			image_id_c = image_id_s+(i*n+j)
+			s_file_name = str(image_id_c)+'_'+str(i)+'x'+str(j)+'_'+file_name
 			#filelst = './val2014/'+file_name
 			cv2.imwrite('./'+folder+'/'+s_file_name,croped_img)	
 			dict_in.append({'coco_url':img_path,
 										'date_captured':date_captured,
 										'flickr_url':img_path,
 										'file_name':s_file_name,
-										'id':image_id_s,
+										'id':image_id_c,
 										'height':grid_h,
 										'width':grid_w,
 										'license':0})			
