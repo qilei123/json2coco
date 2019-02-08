@@ -167,6 +167,7 @@ mode_v = 5
 flip_img_base_number = 100000
 flip_region_base_number = 1000000
 flip = True
+grid_n = 3
 for file_dir in matches:
 	with open(file_dir) as orig_data_file:
 		data = json.load(orig_data_file)
@@ -189,6 +190,7 @@ for file_dir in matches:
 					random_v = randint(0,mode_v-1)
 					
 				if flag_v+random_v == image_id_c:
+					'''
 					file_name = 'val_'+str(image_id_c)+'_'+data[image_id]['filename']
 					filelst = './val2014/'+file_name
 					cv2.imwrite('./val2014/'+file_name,img)	
@@ -200,8 +202,15 @@ for file_dir in matches:
 												'height':height,
 												'width':width,
 												'license':0})
+					'''
+					folder_name = 'val2014'
+					file_name = data[image_id]['filename']
+					filelst = './val2014/'+file_name
+					cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)
+					
 					if flip:							
 						flip_img =	cv2.flip(img,1)
+						'''
 						flip_file_name = 'flip_'+file_name
 						cv2.imwrite('./val2014/'+flip_file_name,flip_img)	
 						flipfilelst = './val2014/'+flip_file_name
@@ -212,8 +221,12 @@ for file_dir in matches:
 													'id':image_id_c+flip_img_base_number,
 													'height':height,
 													'width':width,
-													'license':0})							
+													'license':0})
+						'''
+						flip_file_name = 'flip_'+file_name
+						cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)							
 				else:
+					'''
 					file_name = 'train_'+str(image_id_c)+'_'+data[image_id]['filename']	
 					filelst = './train2014/'+file_name
 					cv2.imwrite('./train2014/'+file_name,img)
@@ -225,8 +238,15 @@ for file_dir in matches:
 												'height':height,
 												'width':width,
 												'license':0})
+					'''
+					folder_name = 'train2014'
+					file_name = data[image_id]['filename']
+					filelst = './train2014/'+file_name
+					cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)					
+					
 					if flip:							
 						flip_img =	cv2.flip(img,1)
+						'''
 						flip_file_name = 'flip_'+file_name
 						cv2.imwrite('./train2014/'+flip_file_name,flip_img)
 						flipfilelst = './train2014/'+flip_file_name
@@ -237,7 +257,10 @@ for file_dir in matches:
 													'id':image_id_c+flip_img_base_number,
 													'height':height,
 													'width':width,
-													'license':0})					
+													'license':0})
+						'''
+						flip_file_name = 'flip_'+file_name
+						cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)											
 				labels_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_count = np.zeros(len(category_id_todo))
