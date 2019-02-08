@@ -256,6 +256,8 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 			category_val_st[category_id_todo.index(category_id)]+=1
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
 			t_bbox = boxToBbox(box)
+			print t_bbox
+			print t_xy
 			annotations.append({'id':region_id+id_increase,
 								'image_id':croped_image_ids[i],
 								'category_id':category_id,
