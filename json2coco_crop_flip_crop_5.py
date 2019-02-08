@@ -10,7 +10,7 @@ from utils import getRegionLabelDic,getJsonFiles
 import numpy as np
 from skimage.draw import polygon
 import PIL.Image as Image
-
+from math import floor
 def cutMainROI(img):
 	x=img[img.shape[0]/2,:,:].sum(1)
 	r=0
@@ -72,19 +72,20 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 	step_w = floor(width*float(n-2)/float(pow((n-1),2)))
 	croped_rects = []
 	croped_image_ids = []
+	image_id_s *= (n*n)
 	for i in range(n):
 		for j in range(n):
 			rect = [i*step_h,j*step_w,i*step_h+grid_h,j*step_w+grid_w]
 			croped_rects.append(rect)
 			print rect
-			croped_img = img(rect[0]:rect[2],rect[1]:rect[3])
-			file_name = str(image_id_s)+'_'+str(i)+'x'+str(j)+'_'+file_name
+			croped_img = img[int(rect[0]):int(rect[2]),int(rect[1]):int(rect[3]),:]
+			s_file_name = str(image_id_s)+'_'+str(i)+'x'+str(j)+'_'+file_name
 			#filelst = './val2014/'+file_name
-			cv2.imwrite('./'+folder+'/'+file_name,croped_img)	
+			cv2.imwrite('./'+folder+'/'+s_file_name,croped_img)	
 			dict_in.append({'coco_url':img_path,
 										'date_captured':date_captured,
 										'flickr_url':img_path,
-										'file_name':file_name,
+										'file_name':s_file_name,
 										'id':image_id_c,
 										'height':grid_h,
 										'width':grid_w,
@@ -418,9 +419,9 @@ for file_dir in matches:
 					lstline = str(image_id_c) + '\t' +filelst+'\t'+save_folder+str(image_id_c)+'_labelIds.png\n'
 					trainlst.write(lstline)
 				labels_mask_im = Image.fromarray(labels_mask)
-				labels_mask_im.save(save_folder+str(image_id_c)+'_labelIds.png')
+				#labels_mask_im.save(save_folder+str(image_id_c)+'_labelIds.png')
 				instances_mask_im = Image.fromarray(instances_mask)
-				instances_mask_im.save(save_folder+str(image_id_c)+'_instanceIds.png')
+				#instances_mask_im.save(save_folder+str(image_id_c)+'_instanceIds.png')
 				image_id_c+=1
 	dir_count+=1	
 
