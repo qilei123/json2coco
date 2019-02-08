@@ -86,7 +86,7 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 										'date_captured':date_captured,
 										'flickr_url':img_path,
 										'file_name':s_file_name,
-										'id':image_id_c,
+										'id':image_id_s,
 										'height':grid_h,
 										'width':grid_w,
 										'license':0})			
