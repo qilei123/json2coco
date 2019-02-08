@@ -59,7 +59,7 @@ def cutMainROI1(img):
 		if not (yy[len(yy)-i-1][0]<10 and yy[len(yy)-i-1][1]<10 and yy[len(yy)-i-1][2]<10):
 			y_e = len(yy)-i
 			break
-	print [y_s,y_e,x_s,x_e]
+	#print [y_s,y_e,x_s,x_e]
 	cut_img = img[int(y_s):int(y_e),int(x_s):int(x_e)]
 	return cut_img,x_s,y_s
 
@@ -255,6 +255,9 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 		print 'iou:'+str(iou)
 		if iou>0.9:
 			category_val_st[category_id_todo.index(category_id)]+=1
+			print t_box
+			print xy
+			print croped_rects[i]
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
 			t_bbox = boxToBbox(t_box)
 			print t_bbox
@@ -380,8 +383,8 @@ for file_dir in matches:
 								category_id=id_count
 								break
 						if category_id==0:
-							print 'error:category_id is 0'
-							print data[image_id]['regions'][region]['region_attributes'][region_attribute]
+							#print 'error:category_id is 0'
+							#print data[image_id]['regions'][region]['region_attributes'][region_attribute]
 							continue
 						if category_id in category_id_todo:
 							bad_region = 0
@@ -408,14 +411,14 @@ for file_dir in matches:
 								else:
 									r = data[image_id]['regions'][region]['shape_attributes']['r']
 								if 'Microaneurysms' in data[image_id]['regions'][region]['region_attributes'][region_attribute]:
-									print 'r:'+str(r)
+									#print 'r:'+str(r)
 									if r>35:
 										r = r/2
-										print 'fixed r'
+										#print 'fixed r'
 								if '(Hemorrhages)' in data[image_id]['regions'][region]['region_attributes'][region_attribute]:
-									print 'r:'+str(r)
+									#print 'r:'+str(r)
 									r = r*2/3
-									print 'fixed r:'+str(r)
+									#print 'fixed r:'+str(r)
 								circle = (data[image_id]['regions'][region]['shape_attributes']['cx'],
 											data[image_id]['regions'][region]['shape_attributes']['cy'],
 											r)
@@ -425,7 +428,7 @@ for file_dir in matches:
 								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
 								if area ==0:
 									print('stoped:'+str(data[image_id]['regions'][region]['shape_attributes']))
-									print('---:'+str(circle))
+									#print('---:'+str(circle))
 								if bbox[2]==0 or bbox[3]==0:
 									bad_region=1								
 							elif data[image_id]['regions'][region]['shape_attributes']['name']=='rect':
