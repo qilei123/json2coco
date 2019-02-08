@@ -255,7 +255,7 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 		print 'iou:'+str(iou)
 		if iou>0.9:
 			category_val_st[category_id_todo.index(category_id)]+=1
-			print t_box
+			print box
 			print xy
 			print croped_rects[i]
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
