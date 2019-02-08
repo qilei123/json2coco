@@ -76,6 +76,7 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 		for j in range(n):
 			rect = [i*step_h,j*step_w,i*step_h+grid_h,j*step_w+grid_w]
 			croped_rects.append(rect)
+			print rect
 			croped_img = img(rect[0]:rect[2],rect[1]:rect[3])
 			file_name = str(image_id_s)+'_'+str(i)+'x'+str(j)+'_'+file_name
 			#filelst = './val2014/'+file_name
