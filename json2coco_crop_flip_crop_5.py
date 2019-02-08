@@ -77,7 +77,7 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 		for j in range(n):
 			rect = [i*step_h,j*step_w,i*step_h+grid_h,j*step_w+grid_w]
 			croped_rects.append(rect)
-			print rect
+			#print rect
 			croped_img = img[int(rect[0]):int(rect[2]),int(rect[1]):int(rect[3]),:]
 			image_id_c = image_id_s+(i*n+j)
 			s_file_name = str(image_id_c)+'_'+str(i)+'x'+str(j)+'_'+file_name
@@ -91,11 +91,40 @@ def cropImg(img,n,dict_in,image_id_s,file_name,folder):
 										'height':grid_h,
 										'width':grid_w,
 										'license':0})			
-			
+			croped_image_ids.append(image_id_c)
 	return croped_rects,croped_image_ids
 
-def cropRegion():
-	return
+
+def compute_iou(rec1, rec2):
+	"""
+	computing IoU
+	:param rec1: (y0, x0, y1, x1), which reflects
+			(top, left, bottom, right)
+	:param rec2: (y0, x0, y1, x1)
+	:return: scala value of IoU
+	"""
+	# computing area of each rectangles
+	S_rec1 = (rec1[2] - rec1[0]) * (rec1[3] - rec1[1])
+	S_rec2 = (rec2[2] - rec2[0]) * (rec2[3] - rec2[1])
+
+	# computing the sum_area
+	sum_area = S_rec1 + S_rec2
+
+	# find the each edge of intersect rectangle
+	left_line = max(rec1[1], rec2[1])
+	right_line = min(rec1[3], rec2[3])
+	top_line = max(rec1[0], rec2[0])
+	bottom_line = min(rec1[2], rec2[2])
+	# judge if there is an intersect
+	if left_line >= right_line or top_line >= bottom_line:
+		return 0
+	else:
+
+		intersect = float(right_line - left_line) * float(bottom_line - top_line)
+		#return intersect / float(sum_area - intersect)
+		return intersect / float(S_rec1)
+
+
 
 #-----------get dictionary of region label
 def getRegionLabelDic(dic_file_path,split_key,index):
@@ -171,6 +200,74 @@ flip_img_base_number = 100000
 flip_region_base_number = 1000000
 flip = True
 grid_n = 3
+
+
+def bboxToBox(bbox):
+	return [bbox[1],bbox[0],bbox[1]+bbox[3],bbox[0]+bbox[2]]
+
+def boxToBbox(box):
+	return [box[1],box[0],box[3]-box[1],box[2]-box[0]]
+
+
+def filtBox(croped_rect,box,xy):
+	t_box = box[:]
+	t_xy = xy[:]
+
+	if t_box[0]<croped_rect[0]:
+		t_box[0] = croped_rect[0]
+	if t_box[1]<croped_rect[1]:
+		t_box[1] = croped_rect[1]
+	if t_box[2]>croped_rect[2]:
+		t_box[2] = croped_rect[2]
+	if t_box[3]>croped_rect[3]:
+		t_box[3] = croped_rect[3]
+	
+	t_box[0] = t_box[0]-croped_rect[0]
+	t_box[2] = t_box[2]-croped_rect[0]
+	t_box[1] = t_box[1]-croped_rect[1]
+	t_box[3] = t_box[3]-croped_rect[1]
+
+	for index_xy in range(len(t_xy)):
+		if index_xy%2==0:
+			
+			if t_xy[index_xy]<croped_rect[1]:
+				t_xy[index_xy] = croped_rect[1]
+			if t_xy[index_xy]>croped_rect[3]:
+				t_xy[index_xy] = croped_rect[3]
+			t_xy[index_xy]-=croped_rect[1]
+			
+		else:
+			if t_xy[index_xy]<croped_rect[0]:
+				t_xy[index_xy] = croped_rect[0]
+			if t_xy[index_xy]>croped_rect[2]:
+				t_xy[index_xy] = croped_rect[2]			
+			t_xy[index_xy]-=croped_rect[0]
+
+	return t_box,t_xy
+
+def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,area,bbox,xy):
+	box = bboxToBox(bbox)
+	id_increase = 0
+	grid_w = croped_rects[0][3] - croped_rects[0][1]
+	grid_h = croped_rects[0][2] - croped_rects[0][0]
+	for i = range(len(croped_image_ids)):
+		iou = compute_iou(box,croped_rects[i])
+		if iou>0.9:
+			category_val_st[category_id_todo.index(category_id)]+=1
+			t_box,t_xy = filtBox(croped_rects[i],box,xy)
+			t_bbox = boxToBbox(box)
+			annotations.append({'id':region_id+id_increase,
+								'image_id':croped_image_ids[i],
+								'category_id':category_id,
+								'iscrowd':0,
+								'area':area,
+								'bbox':t_bbox,
+								'segmentation':[t_xy]})			
+
+			id_increase+=1
+	return id_increase
+
+
 for file_dir in matches:
 	with open(file_dir) as orig_data_file:
 		data = json.load(orig_data_file)
@@ -209,7 +306,7 @@ for file_dir in matches:
 					folder_name = 'val2014'
 					file_name = data[image_id]['filename']
 					filelst = './val2014/'+file_name
-					cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)
+					croped_rects,croped_image_ids = cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)
 					
 					if flip:							
 						flip_img =	cv2.flip(img,1)
@@ -227,7 +324,7 @@ for file_dir in matches:
 													'license':0})
 						'''
 						flip_file_name = 'flip_'+file_name
-						cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)							
+						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)							
 				else:
 					'''
 					file_name = 'train_'+str(image_id_c)+'_'+data[image_id]['filename']	
@@ -245,7 +342,7 @@ for file_dir in matches:
 					folder_name = 'train2014'
 					file_name = data[image_id]['filename']
 					filelst = './train2014/'+file_name
-					cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)					
+					croped_rects,croped_image_ids =cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)					
 					
 					if flip:							
 						flip_img =	cv2.flip(img,1)
@@ -263,7 +360,7 @@ for file_dir in matches:
 													'license':0})
 						'''
 						flip_file_name = 'flip_'+file_name
-						cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)											
+						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)											
 				labels_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_count = np.zeros(len(category_id_todo))
@@ -372,7 +469,9 @@ for file_dir in matches:
 										if index_xy%2==0:
 											flip_xy[index_xy] = width - flip_xy[index_xy]-1
 									flip_bbox[0] = width - flip_bbox[0]-flip_bbox[2] -1	
+								id_increase = 0
 								if flag_v+random_v == image_id_c:
+									'''
 									category_val_st[category_id_todo.index(category_id)]+=1	
 									coco_data_val['annotations'].append({'id':region_id,
 																	 'image_id':image_id_c,
@@ -381,15 +480,23 @@ for file_dir in matches:
 																	 'area':area,
 																	 'bbox':bbox,
 																	 'segmentation':[xy]})
+									'''
+									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data_val['annotations'],region_id,category_id,area,bbox,xy)
+
 									if flip:
+										'''
 										coco_data_val['annotations'].append({'id':region_id+flip_region_base_number,
 																		'image_id':image_id_c+flip_img_base_number,
 																		'category_id':category_id,
 																		'iscrowd':0,
 																		'area':area,
 																		'bbox':flip_bbox,
-																		'segmentation':[flip_xy]})										
+																		'segmentation':[flip_xy]})
+										'''
+										cropRegion(flip_croped_rects,flip_croped_image_ids,coco_data_val['annotations'],
+													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy)										
 								else:
+									'''
 									category_train_st[category_id_todo.index(category_id)]+=1
 									coco_data['annotations'].append({'id':region_id,
 																	 'image_id':image_id_c,
@@ -398,18 +505,24 @@ for file_dir in matches:
 																	 'area':area,
 																	 'bbox':bbox,
 																	 'segmentation':[xy]})
+									'''
+									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data['annotations'],region_id,category_id,area,bbox,xy)
 									if flip:
+										'''
 										coco_data['annotations'].append({'id':region_id+flip_region_base_number,
 																		'image_id':image_id_c+flip_img_base_number,
 																		'category_id':category_id,
 																		'iscrowd':0,
 																		'area':area,
 																		'bbox':flip_bbox,
-																		'segmentation':[flip_xy]})																		
+																		'segmentation':[flip_xy]})
+										'''
+										cropRegion(flip_croped_rects,flip_croped_image_ids,coco_data['annotations'],
+													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy)																		
 								labels_mask = segToMask(xy,height,width,labels_mask,category_id)
 								instances_mask = segToMask(xy,height,width,instances_mask,category_id*1000+instances_count[category_id])
 								instances_count[category_id] += 1
-								region_id+=1
+								region_id+=id_increase
 				save_folder = ''
 				if flag_v+random_v == image_id_c:
 					save_folder = './val2014/'
