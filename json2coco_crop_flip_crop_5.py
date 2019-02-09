@@ -139,7 +139,7 @@ def getRegionLabelDic(dic_file_path,split_key,index):
 	return region_labels
 
 
-def getJsonFiles(dataset_path = '../BostonAI4DB1'):
+def getJsonFiles(dataset_path = '../DR_COCO2'):
 	matches = []
 	paths = []
 	for root, dirnames, filenames in os.walk(dataset_path):
@@ -252,16 +252,16 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 	grid_h = croped_rects[0][2] - croped_rects[0][0]
 	for i in range(len(croped_image_ids)):
 		iou = compute_iou(box,croped_rects[i])
-		print 'iou:'+str(iou)
+		#print 'iou:'+str(iou)
 		if iou>0.9:
 			category_val_st[category_id_todo.index(category_id)]+=1
-			print box
-			print xy
-			print croped_rects[i]
+			#print box
+			#print xy
+			#print croped_rects[i]
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
 			t_bbox = boxToBbox(t_box)
-			print t_bbox
-			print t_xy
+			#print t_bbox
+			#print t_xy
 			annotations.append({'id':region_id+id_increase,
 								'image_id':croped_image_ids[i],
 								'category_id':category_id,
