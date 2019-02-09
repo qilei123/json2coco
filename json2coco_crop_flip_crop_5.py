@@ -198,7 +198,7 @@ flag_v = -1
 mode_v = 5
 flip_img_base_number = 100000
 flip_region_base_number = 1000000
-flip = False
+flip = True
 grid_n = 3
 
 
@@ -245,7 +245,10 @@ def filtBox(croped_rect,box,xy):
 
 	return t_box,t_xy
 
-def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,area,bbox,xy):
+train_mode = 1
+val_mode = 2
+
+def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,area,bbox,xy,train_val):
 	box = bboxToBox(bbox)
 	id_increase = 0
 	grid_w = croped_rects[0][3] - croped_rects[0][1]
@@ -254,7 +257,10 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 		iou = compute_iou(box,croped_rects[i])
 		print 'iou:'+str(iou)
 		if iou>0.9:
-			category_val_st[category_id_todo.index(category_id)]+=1
+			if train_val==val_mode
+				category_val_st[category_id_todo.index(category_id)]+=1
+			elif train_val==train_mode:
+				category_train_st[category_id_todo.index(category_id)]+=1
 			print 'box:'+str(box)
 			print 'xy:'+str(xy)
 			print 'croped_rects[i]:'+str(croped_rects[i])
@@ -494,7 +500,7 @@ for file_dir in matches:
 																	 'bbox':bbox,
 																	 'segmentation':[xy]})
 									'''
-									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data_val['annotations'],region_id,category_id,area,bbox,xy)
+									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data_val['annotations'],region_id,category_id,area,bbox,xy,val_mode)
 
 									if flip:
 										'''
@@ -507,7 +513,7 @@ for file_dir in matches:
 																		'segmentation':[flip_xy]})
 										'''
 										cropRegion(flip_croped_rects,flip_croped_image_ids,coco_data_val['annotations'],
-													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy)										
+													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy,val_mode)										
 								else:
 									'''
 									category_train_st[category_id_todo.index(category_id)]+=1
@@ -519,7 +525,7 @@ for file_dir in matches:
 																	 'bbox':bbox,
 																	 'segmentation':[xy]})
 									'''
-									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data['annotations'],region_id,category_id,area,bbox,xy)
+									id_increase = cropRegion(croped_rects,croped_image_ids,coco_data['annotations'],region_id,category_id,area,bbox,xy,train_mode)
 									if flip:
 										'''
 										coco_data['annotations'].append({'id':region_id+flip_region_base_number,
@@ -531,7 +537,7 @@ for file_dir in matches:
 																		'segmentation':[flip_xy]})
 										'''
 										cropRegion(flip_croped_rects,flip_croped_image_ids,coco_data['annotations'],
-													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy)																		
+													region_id+flip_region_base_number,category_id,area,flip_bbox,flip_xy,train_mode)																		
 								labels_mask = segToMask(xy,height,width,labels_mask,category_id)
 								instances_mask = segToMask(xy,height,width,instances_mask,category_id*1000+instances_count[category_id])
 								instances_count[category_id] += 1
