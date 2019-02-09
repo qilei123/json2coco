@@ -546,6 +546,7 @@ for file_dir in matches:
 								region_id+=id_increase
 								if id_increase==0:
 									unused_region_count+=1
+									print 'unused_region:'+str(unused_region_count)
 				
 				#print 'val_annotations:'+str(len(coco_data_val['annotations']))
 				#print 'train_annotations:'+ str(len(coco_data['annotations']))
