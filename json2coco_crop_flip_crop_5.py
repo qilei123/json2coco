@@ -196,8 +196,8 @@ vallst = open('./annotations/val.lst','w')
 random_v = -1
 flag_v = -1
 mode_v = 5
-flip_img_base_number = 100000
-flip_region_base_number = 1000000
+flip_img_base_number = 1000000
+flip_region_base_number = 10000000
 flip = True
 grid_n = 3
 
@@ -337,7 +337,7 @@ for file_dir in matches:
 													'license':0})
 						'''
 						flip_file_name = 'flip_'+file_name
-						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)							
+						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c+flip_img_base_number,flip_file_name,folder_name)							
 				else:
 					'''
 					file_name = 'train_'+str(image_id_c)+'_'+data[image_id]['filename']	
@@ -373,7 +373,7 @@ for file_dir in matches:
 													'license':0})
 						'''
 						flip_file_name = 'flip_'+file_name
-						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data['images'],image_id_c,flip_file_name,folder_name)											
+						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data['images'],image_id_c+flip_img_base_number,flip_file_name,folder_name)											
 				#print 'val_imgs:'+str(len(coco_data_val['images']))
 				#print 'train_imgs:'+ str(len(coco_data['images']))
 				labels_mask = np.zeros((height,width),dtype = np.uint32)
