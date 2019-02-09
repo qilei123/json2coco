@@ -287,6 +287,7 @@ for file_dir in matches:
 				filelst = ''
 				#print(img_path)
 				img,s_x,s_y = cutMainROI1(img_o)
+				height_o,width_o = img_o.shape[:2]
 				height, width= img.shape[:2]
 				date_captured = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 				
@@ -425,9 +426,9 @@ for file_dir in matches:
 								corners = circle2Polygon(circle,circle_num)
 								xy,x,y = corners2xy(corners)
 								bbox = getBoundingBox(x,y)
-								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
+								area = CaculateArea(Polygon2Mask([width_o,height_o],corners,category_id+1))
 								if area ==0:
-									print [width,height]
+									print [width_o,height_o]
 									print circle
 									print corners
 									print xy
@@ -445,14 +446,14 @@ for file_dir in matches:
 								bbox = rect
 								corners = rect2PolygonCorners(rect)
 								xy,x,y = corners2xy(corners)
-								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
+								area = CaculateArea(Polygon2Mask([width_o,height_o],corners,category_id+1))
 								if bbox[2]==0 or bbox[3]==0:
 									bad_region=1								
 							elif data[image_id]['regions'][region]['shape_attributes']['name']=='polygon':
 								x = data[image_id]['regions'][region]['shape_attributes']['all_points_x']
 								y = data[image_id]['regions'][region]['shape_attributes']['all_points_y']
 								corners = getPolygonCorners(x,y)
-								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
+								area = CaculateArea(Polygon2Mask([width_o,height_o],corners,category_id+1))
 								xy,tx,ty = corners2xy(corners)
 								bbox = getBoundingBox(x,y)
 								if bbox[2]==0 or bbox[3]==0:
