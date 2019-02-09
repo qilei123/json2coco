@@ -428,7 +428,9 @@ for file_dir in matches:
 								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
 								if area ==0:
 									print corners
+									print xy
 									print('stoped:'+str(data[image_id]['regions'][region]['shape_attributes']))
+									print data[image_id]['regions'][region]['region_attributes'][region_attribute]
 									#print('---:'+str(circle))
 								if bbox[2]==0 or bbox[3]==0:
 									bad_region=1								
