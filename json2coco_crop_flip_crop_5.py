@@ -198,7 +198,7 @@ flag_v = -1
 mode_v = 5
 flip_img_base_number = 100000
 flip_region_base_number = 1000000
-flip = True
+flip = False
 grid_n = 3
 
 
