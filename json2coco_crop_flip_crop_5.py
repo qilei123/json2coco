@@ -427,6 +427,7 @@ for file_dir in matches:
 								bbox = getBoundingBox(x,y)
 								area = CaculateArea(Polygon2Mask([width,height],corners,category_id+1))
 								if area ==0:
+									print corners
 									print('stoped:'+str(data[image_id]['regions'][region]['shape_attributes']))
 									#print('---:'+str(circle))
 								if bbox[2]==0 or bbox[3]==0:
