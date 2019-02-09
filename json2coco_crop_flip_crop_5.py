@@ -279,7 +279,7 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 			id_increase+=1
 	return id_increase
 
-
+unused_region_count=0
 for file_dir in matches:
 	with open(file_dir) as orig_data_file:
 		data = json.load(orig_data_file)
@@ -374,8 +374,8 @@ for file_dir in matches:
 						'''
 						flip_file_name = 'flip_'+file_name
 						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data['images'],image_id_c,flip_file_name,folder_name)											
-				print 'val_imgs:'+str(len(coco_data_val['images']))
-				print 'train_imgs:'+ str(len(coco_data['images']))
+				#print 'val_imgs:'+str(len(coco_data_val['images']))
+				#print 'train_imgs:'+ str(len(coco_data['images']))
 				labels_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_count = np.zeros(len(category_id_todo))
@@ -544,9 +544,11 @@ for file_dir in matches:
 								instances_mask = segToMask(xy,height,width,instances_mask,category_id*1000+instances_count[category_id])
 								instances_count[category_id] += 1
 								region_id+=id_increase
+								if id_increase==0:
+									unused_region_count+=1
 				
-				print 'val_annotations:'+str(len(coco_data_val['annotations']))
-				print 'train_annotations:'+ str(len(coco_data['annotations']))
+				#print 'val_annotations:'+str(len(coco_data_val['annotations']))
+				#print 'train_annotations:'+ str(len(coco_data['annotations']))
 				save_folder = ''
 				if flag_v+random_v == image_id_c:
 					save_folder = './val2014/'
@@ -561,12 +563,15 @@ for file_dir in matches:
 				instances_mask_im = Image.fromarray(instances_mask)
 				#instances_mask_im.save(save_folder+str(image_id_c)+'_instanceIds.png')
 				image_id_c+=1
+	'''
 				if image_id_c==100:
 					break
 	if image_id_c==100:
 		break
+	'''
 	dir_count+=1	
 
+print 'unused_region:'+str(unused_region_count)
 log_file.close()
 vallst.close()
 trainlst.close()
