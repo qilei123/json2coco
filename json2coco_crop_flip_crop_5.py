@@ -257,7 +257,7 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 		iou = compute_iou(box,croped_rects[i])
 		print 'iou:'+str(iou)
 		if iou>0.9:
-			if train_val==val_mode
+			if train_val==val_mode:
 				category_val_st[category_id_todo.index(category_id)]+=1
 			elif train_val==train_mode:
 				category_train_st[category_id_todo.index(category_id)]+=1
