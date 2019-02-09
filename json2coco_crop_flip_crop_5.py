@@ -255,19 +255,19 @@ def cropRegion(croped_rects,croped_image_ids,annotations,region_id,category_id,a
 	grid_h = croped_rects[0][2] - croped_rects[0][0]
 	for i in range(len(croped_image_ids)):
 		iou = compute_iou(box,croped_rects[i])
-		print 'iou:'+str(iou)
+		#print 'iou:'+str(iou)
 		if iou>0.9:
 			if train_val==val_mode:
 				category_val_st[category_id_todo.index(category_id)]+=1
 			elif train_val==train_mode:
 				category_train_st[category_id_todo.index(category_id)]+=1
-			print 'box:'+str(box)
-			print 'xy:'+str(xy)
-			print 'croped_rects[i]:'+str(croped_rects[i])
+			#print 'box:'+str(box)
+			#print 'xy:'+str(xy)
+			#print 'croped_rects[i]:'+str(croped_rects[i])
 			t_box,t_xy = filtBox(croped_rects[i],box,xy)
 			t_bbox = boxToBbox(t_box)
-			print 't_bbox:'+str(t_bbox)
-			print 't_xy:'+str(t_xy)
+			#print 't_bbox:'+str(t_bbox)
+			#print 't_xy:'+str(t_xy)
 			annotations.append({'id':region_id+id_increase,
 								'image_id':croped_image_ids[i],
 								'category_id':category_id,
@@ -355,7 +355,7 @@ for file_dir in matches:
 					folder_name = 'train2014'
 					file_name = data[image_id]['filename']
 					filelst = './train2014/'+file_name
-					croped_rects,croped_image_ids =cropImg(img,grid_n,coco_data_val['images'],image_id_c,file_name,folder_name)					
+					croped_rects,croped_image_ids =cropImg(img,grid_n,coco_data['images'],image_id_c,file_name,folder_name)					
 					
 					if flip:							
 						flip_img =	cv2.flip(img,1)
@@ -373,7 +373,9 @@ for file_dir in matches:
 													'license':0})
 						'''
 						flip_file_name = 'flip_'+file_name
-						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data_val['images'],image_id_c,flip_file_name,folder_name)											
+						flip_croped_rects,flip_croped_image_ids =cropImg(flip_img,grid_n,coco_data['images'],image_id_c,flip_file_name,folder_name)											
+				print 'val_imgs:'+str(len(coco_data_val['images']))
+				print 'train_imgs:'+ str(len(coco_data['images']))
 				labels_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_mask = np.zeros((height,width),dtype = np.uint32)
 				instances_count = np.zeros(len(category_id_todo))
@@ -542,6 +544,9 @@ for file_dir in matches:
 								instances_mask = segToMask(xy,height,width,instances_mask,category_id*1000+instances_count[category_id])
 								instances_count[category_id] += 1
 								region_id+=id_increase
+				
+				print 'val_annotations:'+str(len(coco_data_val['annotations']))
+				print 'train_annotations:'+ str(len(coco_data['annotations']))
 				save_folder = ''
 				if flag_v+random_v == image_id_c:
 					save_folder = './val2014/'
