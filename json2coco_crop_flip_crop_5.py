@@ -556,6 +556,10 @@ for file_dir in matches:
 				instances_mask_im = Image.fromarray(instances_mask)
 				#instances_mask_im.save(save_folder+str(image_id_c)+'_instanceIds.png')
 				image_id_c+=1
+				if image_id_c==100:
+					break
+	if image_id_c==100:
+		break
 	dir_count+=1	
 
 log_file.close()
