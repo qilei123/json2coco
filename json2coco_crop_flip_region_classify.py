@@ -348,7 +348,7 @@ for file_dir in matches:
 																		'area':area,
 																		'bbox':flip_bbox,
 																		'segmentation':[flip_xy]})
-										create_classification(flip_img,bbox,val_file_list,'val',region_id,category_id-1)										
+										create_classification(flip_img,bbox,val_file_list,'val',region_id+flip_region_base_number,category_id-1)										
 								else:
 									category_train_st[category_id_todo.index(category_id)]+=1
 									coco_data['annotations'].append({'id':region_id,
@@ -367,7 +367,7 @@ for file_dir in matches:
 																		'area':area,
 																		'bbox':flip_bbox,
 																		'segmentation':[flip_xy]})
-										create_classification(flip_img,bbox,train_file_list,'train',region_id,category_id-1)																		
+										create_classification(flip_img,bbox,train_file_list,'train',region_id+flip_region_base_number,category_id-1)																		
 								labels_mask = segToMask(xy,height,width,labels_mask,category_id)
 								instances_mask = segToMask(xy,height,width,instances_mask,category_id*1000+instances_count[category_id])
 								instances_count[category_id] += 1
