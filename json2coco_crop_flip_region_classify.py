@@ -147,6 +147,8 @@ def create_classification(img,bbox,fi,folder,id,label):
 	fi.write(str(id)+'.jpg \n')
 	region_img = img[int(bbox[1]):int(bbox[1]+bbox[3]),int(bbox[0]):int(bbox[0]+bbox[2])]
 	cv2.imwrite(folder+'/'+str(id)+'.jpg',region_img)
+	cv2.rectangle(img,(bbox[0],bbox[1]),(bbox[0]+bbox[2],bbox[1]+bbox[3]),(255,255,0),5)
+	cv2.imwrite(folder+'/'+str(id)+'_o.jpg',img)
 
 
 for file_dir in matches:
