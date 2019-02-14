@@ -141,7 +141,8 @@ train_file_list = open('train.txt','w')
 val_file_list = open('val.txt','w')
 
 
-def create_classification(img,bbox,fi,folder,id,label):
+def create_classification(timg,bbox,fi,folder,id,label):
+	img = timg.copy()
 	if not os.path.exists(folder):
 		os.mkdir(folder)
 	fi.write(str(id)+'.jpg '+str(label)+'\n')
